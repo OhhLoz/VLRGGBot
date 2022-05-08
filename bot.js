@@ -18,6 +18,11 @@ client.on("ready", () =>
     commands = client.application.commands;
 
   commands?.create({
+    name: 'help',
+    description: 'Lists all current commands',
+  })
+
+  commands?.create({
   name: 'ping',
   description: 'Lists bots current ping',
   })
@@ -43,7 +48,6 @@ client.on("interactionCreate", async (interaction) =>
 
   const {commandName, options} = interaction;
 
-
   if (commandName === 'help')
   {
     var embed = new Discord.MessageEmbed()
@@ -51,7 +55,7 @@ client.on("interactionCreate", async (interaction) =>
     .setColor(0xff8d00)
     .setTimestamp()
     .setFooter({text: "Sent by VLRGG", iconURL: client.user.displayAvatarURL()})
-    .addField('\u200b', `**Bot Commands**`)
+    .addField('\u200b', `${titleSpacer}**Bot Commands**`)
     .addField("/help", "Lists all current commands", false)
     .addField("/ping", "Displays the current ping to the bot & the API", false)
 
