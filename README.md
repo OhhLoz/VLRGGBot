@@ -12,7 +12,7 @@ This bot can be accessed or invited to your discord server via the [Top.gg]()
 ## Built With
 
 * [VSCode](https://code.visualstudio.com/) - Used to code the whole project
-* [Discord.py](https://discordpy.readthedocs.io/en/stable/) - Framework used for the entire bot to connect to the internal discord api.
+* [Discord.js](https://discord.js.org/#/) - Framework used for the entire bot to connect to the internal discord api.
 * [VLR.GG API](https://github.com/axsddlr/vlrggapi) - Used to fetch content from the VLR.GG site
 
 ## Authors
