@@ -1,31 +1,49 @@
 const Discord = require('discord.js');
+const fs = require("fs");
 
 const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
 var titleSpacer = "\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800";
+var vlrGGURL = "https://www.vlr.gg";
+
+const TESTING = true;
 
 const package = require("./package.json");
 const testConfig = require('./config.json');
-process.env.BOT_TOKEN = testConfig.testToken;
+
+if(TESTING)
+  process.env.BOT_TOKEN = testConfig.testToken;
+else
+  process.env.BOT_TOKEN = testConfig.token;
+
+var botData =
+{
+  version: package.version,
+  titleSpacer: titleSpacer,
+  vlrGGURL: vlrGGURL
+}
+
+const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
+const commandsArr = [];
+
+client.commands = new Discord.Collection();
+
+for (const file of commandFiles)
+{
+	const command = require(`./commands/${file}`);
+	commandsArr.push(command.data.toJSON());
+	client.commands.set(command.data.name, command);
+}
+
+console.log(`Loaded ${commandsArr.length} commands`);
 
 client.on("ready", () =>
 {
   const guild = client.guilds.cache.get(testConfig.testguildID); //development server guildid
-  let commands;
 
-  if(guild)
-    commands = guild.commands;
+  if(TESTING)
+    guild.commands.set(commandsArr);
   else
-    commands = client.application.commands;
-
-  commands?.create({
-    name: 'help',
-    description: 'Lists all current commands',
-  })
-
-  commands?.create({
-  name: 'ping',
-  description: 'Lists bots current ping',
-  })
+    client.application.commands.set(commandsArr);
 
   console.log(`VLRGGBot launched, version ${package.version}`);
   client.user.setActivity(`/help`, { type: 'WATCHING' });
@@ -46,42 +64,27 @@ client.on("interactionCreate", async (interaction) =>
   if (!interaction.isCommand())
     return;
 
-  const {commandName, options} = interaction;
+  const command = client.commands.get(interaction.commandName);
 
-  if (commandName === 'help')
+  if (!command)
+    return;
+
+  try
   {
+    await command.execute(interaction, client, botData);
+  }
+  catch(err)
+  {
+    if (err)
+      console.log(err);
+
     var embed = new Discord.MessageEmbed()
-    .setTitle("Help")
-    .setColor(0xff8d00)
+    .setTitle("Error Occurred")
+    .setColor(0x00AE86)
     .setTimestamp()
     .setFooter({text: "Sent by VLRGG", iconURL: client.user.displayAvatarURL()})
-    .addField('\u200b', `${titleSpacer}**Bot Commands**`)
-    .addField("/help", "Lists all current commands", false)
-    .addField("/ping", "Displays the current ping to the bot & the API", false)
-
-    interaction.reply
-    ({
-      embeds: [embed],
-      ephemeral: true
-    })
-  }
-
-  if (commandName === 'ping')
-  {
-    try
-    {
-      const message = await interaction.reply({ content: "Pong!", fetchReply: true, ephemeral: true });
-
-      await interaction.editReply(
-      {
-        content: `Bot Latency: \`${message.createdTimestamp - interaction.createdTimestamp}ms\`, Websocket Latency: \`${client.ws.ping}ms\``,
-        ephemeral: true
-      });
-    }
-    catch (err)
-    {
-      console.log("Exception caught at /ping => ", err);
-    }
+    .setDescription(`An error occurred whilst executing command. Please try again or visit [vlr.gg](${vlrGGURL})`);
+    await interaction.reply({ embeds: [embed] });
   }
 });
 
