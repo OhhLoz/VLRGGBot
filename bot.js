@@ -1,9 +1,9 @@
 const Discord = require('discord.js');
 const fs = require("fs");
+const func = require("./functions.js");
 
 const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
 var titleSpacer = "\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800";
-var vlrGGURL = "https://www.vlr.gg";
 
 const TESTING = true;
 
@@ -17,9 +17,13 @@ else
 
 var botData =
 {
+  servercount: 0,
+  usercount: 0,
+  botcount: 0,
+  channelcount: 0,
   version: package.version,
   titleSpacer: titleSpacer,
-  vlrGGURL: vlrGGURL
+  vlrGGURL: "https://www.vlr.gg"
 }
 
 const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
@@ -45,18 +49,27 @@ client.on("ready", () =>
   else
     client.application.commands.set(commandsArr);
 
-  console.log(`VLRGGBot launched, version ${package.version}`);
-  client.user.setActivity(`/help`, { type: 'WATCHING' });
+  client.guilds.cache.forEach((guild) =>
+  {
+    botData = func.checkStats(guild, botData, true);
+  })
+
+  console.log(`VLRGG is currently serving ${botData.usercount} users, in ${botData.channelcount} channels of ${botData.servercount} servers. Alongside ${botData.botcount} bot brothers.`);
+  client.user.setActivity(`${botData.servercount} servers | /help`, { type: 'WATCHING' });
 });
 
 client.on("guildCreate", guild =>
 {
+  botData = func.checkStats(guild, botData, true);
   console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
+  client.user.setActivity(`${botData.servercount} servers | /help`, { type: 'WATCHING' });
 });
 
 client.on("guildDelete", guild =>
 {
+  botData = func.checkStats(guild, botData, false);
   console.log(`I have been removed from: ${guild.name} (id: ${guild.id}). This guild had ${guild.memberCount} members!`);
+  client.user.setActivity(`${botData.servercount} servers | /help`, { type: 'WATCHING' });
 });
 
 client.on("interactionCreate", async (interaction) =>
@@ -71,6 +84,7 @@ client.on("interactionCreate", async (interaction) =>
 
   try
   {
+    await interaction.deferReply();
     await command.execute(interaction, client, botData);
   }
   catch(err)

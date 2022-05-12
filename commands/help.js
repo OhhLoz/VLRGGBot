@@ -18,7 +18,7 @@ module.exports =
         .addField("/ping", "Displays the current ping to the bot & the API", false)
         .addField("/stats", "Displays bot statistics, invite link and contact information", false)
 
-        interaction.reply
+        interaction.editReply
         ({
             embeds: [embed],
             ephemeral: true

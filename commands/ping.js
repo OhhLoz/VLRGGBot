@@ -5,11 +5,11 @@ module.exports =
 	data: new SlashCommandBuilder()
 		.setName("ping")
 		.setDescription("Displays the current ping to the bot & the API"),
-	async execute(interaction, client)
+	async execute(interaction, client, botData)
     {
         try
         {
-            const message = await interaction.reply({ content: "Pong!", fetchReply: true, ephemeral: true });
+            const message = await interaction.editReply({ content: "Pong!", fetchReply: true, ephemeral: true });
 
             await interaction.editReply(
             {
