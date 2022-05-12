@@ -23,6 +23,7 @@ module.exports =
         .addField("Uptime", func.getTime(client.uptime), true)
         .addField("Invite Link", "[Invite](https://discordapp.com/oauth2/authorize?client_id=972314485308158012&scope=bot&permissions=277025442816)", true)
         .addField("Support Link", "[GitHub](https://github.com/OhhLoz/VLRGGBot)", true)
+        .addField("Support Server", "[Discord](https://discord.gg/Kp62Mgmf3g)", true)
         .addField("Bot Page", "[Vote Here!]()", true)
 
         interaction.editReply
