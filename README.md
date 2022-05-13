@@ -18,7 +18,6 @@ This bot can be accessed or invited to your discord server via the [Top.gg]()
 ## Authors
 
 * **Laurence Ure** - *Active Developer* - [Website](http://www.laurenceure.me)
-* **Gergő Szuhánszky** - *Active Developer*
 
 ## License
 
