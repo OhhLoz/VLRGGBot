@@ -1,12 +1,12 @@
 const Discord = require('discord.js');
 const fs = require("fs");
 const func = require("./functions.js");
-const VLRGG = require("./vlrggAPIWrapper.js");
 
 const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
 var titleSpacer = "\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800";
 
 const TESTING = true;
+const vlrggURL = "https://www.vlr.gg";
 
 const package = require("./package.json");
 const testConfig = require('./config.json');
@@ -16,6 +16,40 @@ if(TESTING)
 else
   process.env.BOT_TOKEN = testConfig.token;
 
+const reactionControls =
+{
+  PREV_PAGE: '⬅',
+  NEXT_PAGE: '➡',
+  STOP: '⏹',
+}
+
+const row = new Discord.MessageActionRow()
+.addComponents(
+  new Discord.MessageButton()
+  .setStyle('LINK')
+  .setLabel("Vote!")
+  .setURL(vlrggURL),
+  new Discord.MessageButton()
+  .setCustomId(reactionControls.PREV_PAGE)
+  .setStyle('SECONDARY')
+  .setLabel(" ")
+  .setEmoji(reactionControls.PREV_PAGE),
+  new Discord.MessageButton()
+  .setCustomId(reactionControls.STOP)
+  .setStyle('SECONDARY')
+  .setLabel(" ")
+  .setEmoji(reactionControls.STOP),
+  new Discord.MessageButton()
+  .setCustomId(reactionControls.NEXT_PAGE)
+  .setStyle('SECONDARY')
+  .setLabel(" ")
+  .setEmoji(reactionControls.NEXT_PAGE),
+  new Discord.MessageButton()
+  .setStyle('LINK')
+  .setLabel("HLTV")
+  .setURL(vlrggURL)
+);
+
 var botData =
 {
   servercount: 0,
@@ -24,7 +58,9 @@ var botData =
   channelcount: 0,
   version: package.version,
   titleSpacer: titleSpacer,
-  vlrGGURL: "https://www.vlr.gg"
+  vlrggURL: vlrggURL,
+  interactionRow: row,
+  reactionControls: reactionControls
 }
 
 const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
@@ -98,7 +134,7 @@ client.on("interactionCreate", async (interaction) =>
     .setColor(0x00AE86)
     .setTimestamp()
     .setFooter({text: "Sent by VLRGG", iconURL: client.user.displayAvatarURL()})
-    .setDescription(`An error occurred whilst executing command. Please try again or visit [vlr.gg](${botData.vlrGGURL})`);
+    .setDescription(`An error occurred whilst executing command. Please try again or visit [vlr.gg](${botData.vlrggURL})`);
     await interaction.editReply({ embeds: [embed] });
   }
 });
