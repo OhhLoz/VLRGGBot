@@ -135,7 +135,7 @@ client.on("interactionCreate", async (interaction) =>
     .setTimestamp()
     .setFooter({text: "Sent by VLRGG", iconURL: client.user.displayAvatarURL()})
     .setDescription(`An error occurred whilst executing command. Please try again or visit [vlr.gg](${botData.vlrggURL})`);
-    await interaction.editReply({ embeds: [embed] });
+    await interaction.reply({ embeds: [embed] });
   }
 });
 

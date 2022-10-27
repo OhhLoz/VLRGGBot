@@ -1,0 +1,14 @@
+{
+    "na": "North America",
+    "eu": "Europe",
+    "ap" : "Asia-Pacific",
+    "la" : "Latin America",
+    "la-s" : "Latin America South",
+    "la-n" : "Latin America North",
+    "oce" : "Oceania",
+    "kr" : "Korea",
+    "mn" : "Middle East & Northern Africa",
+    "gc" : "Game Changers",
+    "br" : "Brazil",
+    "ch" : "China"
+}

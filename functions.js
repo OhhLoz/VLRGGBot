@@ -77,4 +77,60 @@ let getTime = (milli) =>
      return embed;
  }
 
-module.exports = {checkStats, getTime, handleNewsPages}
+ /**
+ * Aims to provide page functionality to the published Discord news embeds.
+ *
+ * startIndex is used to ensure a different startIndex can be provided to move along the pages.
+ *
+ * @param {Object}   ranksArray     Object containing the ranks to be formatted into pages.
+ * @param {int}      startIndex     Which index within the Object to start populating the pages with.
+ *
+ * @return {Discord.MessageEmbed}      Returns the formatted embed so it can be edited further or sent to the desired channel.
+ */
+  var handleRankingsPages = (ranksArray, startIndex) =>
+  {
+    var pageSize = 10;
+    var embed = new MessageEmbed()
+        .setColor(0x00AE86)
+        .setTimestamp()
+        .setTitle("Rankings")
+        .setColor(0x00AE86)
+        .setTimestamp()
+        .setURL(`${vlrggURL}/rankings`);
+
+    for (var i = startIndex; i < startIndex+pageSize; i++)
+      {
+        var ranksObj = ranksArray[i];
+        var pages = ranksArray.length/pageSize;
+
+        embed.setFooter({text: `Page ${startIndex/pageSize + 1} of ${Math.ceil(pages)}`, iconURL: "https://cdn.discordapp.com/avatars/972314485308158012/9e45a7bccde846187ebcaf341b3b6f93.png?size=4096"});
+
+        if(ranksObj == undefined)
+          break;
+
+        embed.addFields
+        (
+          {name:`${ranksObj.rank}. ${ranksObj.team}`, value: `Location: ${ranksObj.country}`}
+        )
+      }
+      return embed;
+  }
+
+ var id = function(x) {return x;};
+
+/**
+ * Returns a reversed hashmap from an input hashmap.
+ *
+ * @param {HashMap}   map           input hashmap to be reversed.
+ * @param {function}   [f]          optional function parameter.
+ *
+ * @return {HashMap}                Returns the reversed hashmap.
+ */
+var reverseMapFromMap = function(map, f) {
+  return Object.keys(map).reduce(function(acc, k) {
+    acc[map[k]] = (acc[map[k]] || []).concat((f || id)(k))
+    return acc
+  },{})
+}
+
+module.exports = {checkStats, getTime, handleNewsPages, handleRankingsPages, reverseMapFromMap}
